@@ -1,0 +1,13 @@
+### suffixes
+*.pyc
+
+### build files
+build/
+dist/
+filecrypt.egg-info/
+venv/
+
+
+### testing files
+test.txt
+test.txt.fc
