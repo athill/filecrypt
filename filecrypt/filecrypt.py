@@ -14,6 +14,11 @@ class FileCrypt:
     prefix = 'Salted__'
     mode = AES.MODE_CBC
 
+    def encryptfile(self, in_filename, out_filename, password, key_length=32):
+        with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
+            self.encrypt(in_file, out_file, password)  
+
+
 
     def encrypt(self, in_file, out_file, password, key_length=32):
         salt = Random.new().read(self.bs - len(self.prefix))
@@ -43,7 +48,6 @@ class FileCrypt:
                 chunk = chunk[:-padding_length]
                 finished = True
             out_file.write(chunk)
-        print(out_file.read())
 
     def get_new_password(self):
         pswd = None

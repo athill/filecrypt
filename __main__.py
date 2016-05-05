@@ -21,14 +21,13 @@ def main():
     parser.add_argument('-d', '--delete-original', action="store_true", help='Delete original file')
     parser.add_argument('-o', '--output-file', help='Custom output file')
     args = parser.parse_args()
-    pprint(args)
+    # pprint(args)
     filecrypt = FileCrypt()
     if args.action == 'encrypt':
-        pswd = filecrypt.get_new_password()
+        password = filecrypt.get_new_password()
         if args.output_file == None:
-            args.output_file = args.file + '.fc'
-        with open(args.file, 'rb') as in_file, open(args.output_file, 'wb') as out_file:
-            filecrypt.encrypt(in_file, out_file, pswd)            
+            args.output_file = args.file + '.fc'        
+        filecrypt.encryptfile(args.file, args.output_file, password)
         print('* '+args.file+' encrypted as '+args.output_file)
     elif args.action == 'decrypt':
         pswd = filecrypt.get_password()
@@ -49,7 +48,7 @@ def main():
                     shutil.copyfile(args.file, tmpfile)
                     os.remove(args.file)
                     args.file = tmpfile
-        with open(args.file, 'rb') as in_file, open(args.output_file, 'a+b') as out_file:
+        with open(args.file, 'rb') as in_file, open(args.output_file, 'w') as out_file:
             filecrypt.decrypt(in_file, out_file, pswd)
             print('* '+args.file+' decrypted as '+args.output_file)
 
