@@ -14,9 +14,15 @@ class FileCrypt:
     prefix = 'Salted__'
     mode = AES.MODE_CBC
 
+    ### TODO: add some logic in here about the .fc extension, but raise errors rather than outputting to screen as in __main__
+
     def encryptfile(self, in_filename, out_filename, password, key_length=32):
         with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
             self.encrypt(in_file, out_file, password)  
+
+    def decryptfile(self, in_filename, out_filename, password, key_length=32):
+        with open(in_filename, 'rb') as in_file, open(out_filename, 'w') as out_file:
+            self.decrypt(in_file, out_file, password)        
 
 
 

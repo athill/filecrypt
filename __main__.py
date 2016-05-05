@@ -15,6 +15,7 @@ from filecrypt.filecrypt import FileCrypt
 ## usage
 
 def main():
+    ## arguments
     parser = argparse.ArgumentParser(prog='filecrypt', description='Encrypt and decrypt files with password protection')
     parser.add_argument('action', help='Action to take', choices=set(('encrypt', 'decrypt')))
     parser.add_argument('file', help='File to encrypt or decrypt. By default will add ".fc" extension when encryting and remove when decrypting')
@@ -22,24 +23,29 @@ def main():
     parser.add_argument('-o', '--output-file', help='Custom output file')
     args = parser.parse_args()
     # pprint(args)
+    ## let's do this
     filecrypt = FileCrypt()
+    ## encrypting
     if args.action == 'encrypt':
         password = filecrypt.get_new_password()
         if args.output_file == None:
             args.output_file = args.file + '.fc'        
         filecrypt.encryptfile(args.file, args.output_file, password)
         print('* '+args.file+' encrypted as '+args.output_file)
+    ## decrypting
     elif args.action == 'decrypt':
-        pswd = filecrypt.get_password()
+        password = filecrypt.get_password()
         if args.output_file == None:
             args.output_file = num = re.sub(r'\.fc$', "", args.file) 
+            ## input and output files are the same
             if args.output_file == args.file:
                 answer = raw_input('Output and input files are same. Overwrite input file? [y/N]')
+                ## exit
                 if answer.lower() != 'y':
                     print('* Add a .fc extension to input file or specify an output file with -o or --output-file')
                     exit()
+                ## copy source file to tmp dir
                 else:
-                    # files have same name, copy source file to tmp dir
                     rootdir = os.path.abspath(os.sep)
                     import uuid
                     filename = str(uuid.uuid4())
@@ -48,9 +54,8 @@ def main():
                     shutil.copyfile(args.file, tmpfile)
                     os.remove(args.file)
                     args.file = tmpfile
-        with open(args.file, 'rb') as in_file, open(args.output_file, 'w') as out_file:
-            filecrypt.decrypt(in_file, out_file, pswd)
-            print('* '+args.file+' decrypted as '+args.output_file)
+        filecrypt.decryptfile(args.file, args.output_file, password)
+        print('* '+args.file+' decrypted as '+args.output_file)
 
     if args.delete_original:
         os.remove(args.file)
