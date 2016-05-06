@@ -11,7 +11,7 @@ from pprint import pprint
 
 class FileCrypt:
     bs = AES.block_size
-    prefix = 'Salted__'
+    prefix = 'filecrypt__'
     mode = AES.MODE_CBC
 
     ## TODO: add some logic in here about the .fc extension, but raise errors rather than outputting to screen as in __main__
