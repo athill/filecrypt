@@ -2,7 +2,7 @@
 
 ## from http://stackoverflow.com/questions/16761458/how-to-aes-encrypt-decrypt-files-using-python-pycrypto-in-an-openssl-compatible
 ## looking into password protecting files
-import argparse, getpass, os, re, shutil, sys
+import getpass
 
 from hashlib import md5
 from Crypto.Cipher import AES
@@ -14,8 +14,7 @@ class FileCrypt:
     prefix = 'Salted__'
     mode = AES.MODE_CBC
 
-    ### TODO: add some logic in here about the .fc extension, but raise errors rather than outputting to screen as in __main__
-
+    ## TODO: add some logic in here about the .fc extension, but raise errors rather than outputting to screen as in __main__
     def encryptfile(self, in_filename, out_filename, password, key_length=32):
         with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
             self.encrypt(in_file, out_file, password)  
@@ -23,8 +22,6 @@ class FileCrypt:
     def decryptfile(self, in_filename, out_filename, password, key_length=32):
         with open(in_filename, 'rb') as in_file, open(out_filename, 'w') as out_file:
             self.decrypt(in_file, out_file, password)        
-
-
 
     def encrypt(self, in_file, out_file, password, key_length=32):
         salt = Random.new().read(self.bs - len(self.prefix))
