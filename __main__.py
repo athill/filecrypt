@@ -1,18 +1,7 @@
-# sudo pip install pycrypto
-
-## from http://stackoverflow.com/questions/16761458/how-to-aes-encrypt-decrypt-files-using-python-pycrypto-in-an-openssl-compatible
-## looking into password protecting files
-import argparse, getpass, os, re, shutil, sys
-
-# from hashlib import md5
-# from Crypto.Cipher import AES
-# from Crypto import Random
+import argparse, os, re, shutil, sys
 from pprint import pprint
 
-
 from filecrypt.filecrypt import FileCrypt
-
-## usage
 
 def main():
     ## arguments
