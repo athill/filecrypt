@@ -17,23 +17,21 @@ def main():
     filecrypt = FileCrypt()
     ## encrypting
     if args.action == 'encrypt':
-        password = filecrypt.get_new_password()
-        if args.output_file == None:
-            args.output_file = args.file + '.fc'  
+        password = filecrypt.get_new_password() 
         try:      
-            filecrypt.encryptfile(args.file, args.output_file, password)
-            print('* '+args.file+' encrypted as '+args.output_file)
+            filecrypt.encryptfile(args.file, password, args.output_file)
+            output_file = filecrypt.add_extension(args.file) if args.output_file == None else args.output_file
+            print('* '+args.file+' encrypted as ' + output_file)
         except (SameInputOutputFileError, InvalidFileError) as e:
             print('* ' + e.message)
             exit(1)
     ## decrypting
     elif args.action == 'decrypt':
         password = filecrypt.get_password()
-        if args.output_file == None:
-            args.output_file = num = re.sub(r'\.fc$', "", args.file) 
         try:
-            filecrypt.decryptfile(args.file, args.output_file, password)
-            print('* '+args.file+' decrypted as '+args.output_file)
+            filecrypt.decryptfile(args.file, password, args.output_file)
+            output_file = filecrypt.remove_extension(args.file) if args.output_file == None else args.output_file
+            print('* '+args.file+' decrypted as ' + output_file)
         except (InvalidPasswordError, InvalidFileTypeError, InvalidFileError, InvalidFileContentError, SameInputOutputFileError) as e: 
             print('* ' + e.message)
             exit(1)

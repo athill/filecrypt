@@ -75,6 +75,29 @@ class FilecryptTest(unittest.TestCase):
 			self.__encryptfile(in_filename='foo')
 		self.assertTrue(context.exception.message in context.exception)
 
+	def testDecryptRemovesExtensionByDefault(self):
+		self.__create_test_file()
+		self.filecrypt.encryptfile(self.__unencrypted_filename, self.__password, self.__encrypted_filename)
+		self.__remove_test_file()
+		self.filecrypt.decryptfile(self.__encrypted_filename, self.__password)
+		self.assertTrue(os.path.exists(self.__unencrypted_filename))
+
+	def testEncryptAddsExtensionByDefault(self):		
+		self.__create_test_file()
+		self.filecrypt.encryptfile(self.__unencrypted_filename, self.__password)
+		self.assertTrue(os.path.exists(self.__encrypted_filename))
+
+	def testAddExtension(self):
+		filename = 'foo'
+		expected = filename+'.'+self.filecrypt.extension
+		actual = self.filecrypt.add_extension(filename)
+		self.assertEqual(expected, actual)
+
+	def testRemoveExtension(self):
+		filename = 'foo'
+		expected = filename
+		actual = self.filecrypt.remove_extension(filename+'.'+self.filecrypt.extension)
+		self.assertEqual(expected, actual)
 
 	#### helpers	
 
@@ -94,18 +117,18 @@ class FilecryptTest(unittest.TestCase):
 			content = text_file.read()
 		return content
 
-	def __encryptfile(self, in_filename=None, out_filename=None, password=None):
+	def __encryptfile(self, in_filename=None, password=None, out_filename=None,):
 		in_filename = self.__unencrypted_filename if in_filename == None else in_filename
 		out_filename = self.__encrypted_filename if out_filename == None else out_filename
 		password = self.__password if password == None else out_filename
-		self.filecrypt.encryptfile(in_filename, out_filename, password)
+		self.filecrypt.encryptfile(in_filename, password, out_filename)
 
-	def __decryptfile(self, in_filename=None, out_filename=None, password=None):
+	def __decryptfile(self, in_filename=None, password=None, out_filename=None):
 		in_filename = self.__encrypted_filename if in_filename == None else in_filename
 		out_filename = self.__unencrypted_filename if out_filename == None else out_filename
 		password = self.__password if password == None else out_filename
 
-		self.filecrypt.decryptfile(in_filename, out_filename, password)		
+		self.filecrypt.decryptfile(in_filename, password, out_filename)
 
 	def __get_datetime_string(self):
 		ts = time.time()
