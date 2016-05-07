@@ -23,7 +23,7 @@ class MyTest(unittest.TestCase):
 	def testBasicEncryptingAndDecrypting(self):
 		self.__create_test_file()
 		self.__encryptfile()
-		os.remove(self.__unencrypted_filename)
+		self.__remove_test_file()
 		self.__decryptfile()
 		with open(self.__unencrypted_filename, 'r') as text_file:
 			content = text_file.read()
@@ -36,6 +36,10 @@ class MyTest(unittest.TestCase):
 		content = self.__unencrypted_content if content == None else content
 		with open(filename, "w") as text_file:
 			text_file.write(content)
+
+	def __remove_test_file(self, filename=None):
+		filename = self.__unencrypted_filename if filename == None else filename
+		os.remove(filename)
 
 	def __encryptfile(self, in_filename=None, out_filename=None, password=None):
 		in_filename = self.__unencrypted_filename if in_filename == None else in_filename
