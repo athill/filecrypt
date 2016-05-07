@@ -2,7 +2,7 @@
 
 ## from http://stackoverflow.com/questions/16761458/how-to-aes-encrypt-decrypt-files-using-python-pycrypto-in-an-openssl-compatible
 ## looking into password protecting files
-import getpass
+import getpass, os, shutil, uuid
 
 from hashlib import md5
 from Crypto.Cipher import AES
@@ -19,7 +19,15 @@ class InvalidFileTypeError(Exception):
 
 class InvalidFileContentError(Exception):
     def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)  
+        Exception.__init__(self,*args,**kwargs) 
+
+class SameInputOutputFileError(Exception):
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs) 
+
+class InvalidFileError(IOError):
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs) 
 
 class FileCrypt:
     bs = AES.block_size
@@ -28,25 +36,40 @@ class FileCrypt:
 
     ## TODO: add some logic in here about the .fc extension, but raise errors rather than outputting to screen as in __main__
     def encryptfile(self, in_filename, out_filename, password, key_length=32):
-        with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
-            self.encrypt(in_file, out_file, password)  
+        if in_filename == out_filename:
+            raise SameInputOutputFileError('Input and output files cannot be same')
+        try:        
+            with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
+                self.encrypt(in_file, out_file, password)
+        except IOError as ioe:
+            raise InvalidFileError(ioe.strerror + ': ' + ioe.filename)
+
 
     def decryptfile(self, in_filename, out_filename, password, key_length=32):
-        with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
-            content = in_file.read()
-            if content[:len(self.prefix)] != self.prefix:
-                raise InvalidFileTypeError('Invalid file type. Not a filecrypt file.')
-            in_file.seek(0)
-            try:
-                self.decrypt(in_file, out_file, password) 
-            except ValueError as ve:
-                raise InvalidFileContentError('Something went wrong. Perhaps the encrypted file is corrupted. The message is: '+ve.message)
+        if in_filename == out_filename:
+            raise SameInputOutputFileError('Input and output files cannot be same')
+        try:
+            with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
+                ## check for valid prefix
+                content = in_file.read()
+                prefix = content[:len(self.prefix)]
+                if prefix != self.prefix:
+                    raise InvalidFileTypeError('Invalid file type. Not a filecrypt file.')
+                in_file.seek(0)
+                ## decrypt file
+                try:
+                    self.decrypt(in_file, out_file, password) 
+                except ValueError as ve:
+                    raise InvalidFileContentError('Something went wrong. Perhaps the encrypted file is corrupted. The message is: '+ve.message)
+        except IOError as ioe:
+            raise InvalidFileError(ioe.strerror + ': ' + ioe.filename)
 
         ## check contents
         with open(out_filename, 'rb') as out_file:
             content = out_file.read()
         if content == '':
             raise  InvalidPasswordError('Invalid password')
+
 
 
     def encrypt(self, in_file, out_file, password, key_length=32):
@@ -64,7 +87,6 @@ class FileCrypt:
             out_file.write(cipher.encrypt(chunk))
 
     def decrypt(self, in_file, out_file, password, key_length=32):
-        self.bs = AES.block_size
         salt = in_file.read(self.bs)[len(self.prefix):]
         key, iv = self.__derive_key_and_iv(password, salt, key_length, self.bs)
         cipher = self.__get_cypher(key, iv)
