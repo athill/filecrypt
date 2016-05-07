@@ -1,5 +1,5 @@
 import unittest, os, uuid, shutil, datetime, time
-from filecrypt.filecrypt import FileCrypt
+from filecrypt.filecrypt import FileCrypt, InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError
 from pprint import pprint
 
 class FilecryptTest(unittest.TestCase):
@@ -27,6 +27,27 @@ class FilecryptTest(unittest.TestCase):
 		self.__decryptfile()
 		content = self.__read_test_file()
 		self.assertEqual(self.__unencrypted_content, content)
+
+	def testDecryptFailsIfBadPassword(self):
+		self.__create_test_file()
+		self.__encryptfile()
+		with self.assertRaises(InvalidPasswordError) as context:
+			self.__decryptfile(password='foobar')
+		self.assertTrue('Invalid password' in context.exception)
+
+	def testDecryptFailsIfBadFileType(self):
+		with open(self.__encrypted_filename, 'wb') as encryted_file:
+			encryted_file.write('foo bar baz')
+		with self.assertRaises(InvalidFileTypeError) as context:
+			self.__decryptfile()
+		self.assertTrue('Invalid file type. Not a filecrypt file.' in context.exception)
+
+	def testDecryptFailsIfBadContentType(self):
+		with open(self.__encrypted_filename, 'wb') as encryted_file:
+			encryted_file.write(self.filecrypt.prefix+'foo bar baz')
+		with self.assertRaises(InvalidFileContentError) as context:
+			self.__decryptfile()
+		self.assertTrue('Something went wrong. Perhaps the encrypted file is corrupted.' in context.exception.message)				
 
 	#### helpers	
 

@@ -9,9 +9,17 @@ from Crypto.Cipher import AES
 from Crypto import Random
 from pprint import pprint
 
-class BadPasswordException(Exception):
+class InvalidPasswordError(Exception):
     def __init__(self,*args,**kwargs):
         Exception.__init__(self,*args,**kwargs)
+
+class InvalidFileTypeError(Exception):
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)  
+
+class InvalidFileContentError(Exception):
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)  
 
 class FileCrypt:
     bs = AES.block_size
@@ -25,12 +33,20 @@ class FileCrypt:
 
     def decryptfile(self, in_filename, out_filename, password, key_length=32):
         with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
-            self.decrypt(in_file, out_file, password) 
-        # check contents
+            content = in_file.read()
+            if content[:len(self.prefix)] != self.prefix:
+                raise InvalidFileTypeError('Invalid file type. Not a filecrypt file.')
+            in_file.seek(0)
+            try:
+                self.decrypt(in_file, out_file, password) 
+            except ValueError as ve:
+                raise InvalidFileContentError('Something went wrong. Perhaps the encrypted file is corrupted. The message is: '+ve.message)
+
+        ## check contents
         with open(out_filename, 'rb') as out_file:
             content = out_file.read()
         if content == '':
-            raise  BadPasswordException('Invalid password')
+            raise  InvalidPasswordError('Invalid password')
 
 
     def encrypt(self, in_file, out_file, password, key_length=32):

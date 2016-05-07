@@ -1,7 +1,7 @@
 import argparse, os, re, shutil, sys
 from pprint import pprint
 
-from filecrypt.filecrypt import FileCrypt, BadPasswordException
+from filecrypt.filecrypt import FileCrypt, InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError
 
 def main():
     ## arguments
@@ -46,8 +46,9 @@ def main():
         try:
             filecrypt.decryptfile(args.file, args.output_file, password)
             print('* '+args.file+' decrypted as '+args.output_file)
-        except: 
-            print('* Invalid password')
+        except (InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError) as e: 
+            print('* ' + e.message)
+            exit()
 
     if args.delete_original:
         os.remove(args.file)
