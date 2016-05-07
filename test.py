@@ -99,6 +99,18 @@ class FilecryptTest(unittest.TestCase):
 		actual = self.filecrypt.remove_extension(filename+'.'+self.filecrypt.extension)
 		self.assertEqual(expected, actual)
 
+	def testDecryptCanRemoveOriginal(self):
+		self.__create_test_file()
+		self.__encryptfile()
+		self.__remove_test_file()
+		self.__decryptfile(delete_original=True)
+		self.assertFalse(os.path.exists(self.__encrypted_filename))
+
+	def testEncryptCanRemoveOriginal(self):
+		self.__create_test_file()
+		self.__encryptfile(delete_original=True)
+		self.assertFalse(os.path.exists(self.__unencrypted_filename))		
+
 	#### helpers	
 
 	def __create_test_file(self, filename=None, content=None):
@@ -117,18 +129,18 @@ class FilecryptTest(unittest.TestCase):
 			content = text_file.read()
 		return content
 
-	def __encryptfile(self, in_filename=None, password=None, out_filename=None,):
+	def __encryptfile(self, in_filename=None, password=None, out_filename=None, delete_original=False):
 		in_filename = self.__unencrypted_filename if in_filename == None else in_filename
 		out_filename = self.__encrypted_filename if out_filename == None else out_filename
 		password = self.__password if password == None else out_filename
-		self.filecrypt.encryptfile(in_filename, password, out_filename)
+		self.filecrypt.encryptfile(in_filename, password, out_filename, delete_original)
 
-	def __decryptfile(self, in_filename=None, password=None, out_filename=None):
+	def __decryptfile(self, in_filename=None, password=None, out_filename=None, delete_original=False):
 		in_filename = self.__encrypted_filename if in_filename == None else in_filename
 		out_filename = self.__unencrypted_filename if out_filename == None else out_filename
 		password = self.__password if password == None else out_filename
 
-		self.filecrypt.decryptfile(in_filename, password, out_filename)
+		self.filecrypt.decryptfile(in_filename, password, out_filename, delete_original)
 
 	def __get_datetime_string(self):
 		ts = time.time()

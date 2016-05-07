@@ -19,7 +19,7 @@ def main():
     if args.action == 'encrypt':
         password = filecrypt.get_new_password() 
         try:      
-            filecrypt.encryptfile(args.file, password, args.output_file)
+            filecrypt.encryptfile(args.file, password, args.output_file, args.delete_original)
             output_file = filecrypt.add_extension(args.file) if args.output_file == None else args.output_file
             print('* '+args.file+' encrypted as ' + output_file)
         except (SameInputOutputFileError, InvalidFileError) as e:
@@ -29,7 +29,7 @@ def main():
     elif args.action == 'decrypt':
         password = filecrypt.get_password()
         try:
-            filecrypt.decryptfile(args.file, password, args.output_file)
+            filecrypt.decryptfile(args.file, password, args.output_file, args.delete_original)
             output_file = filecrypt.remove_extension(args.file) if args.output_file == None else args.output_file
             print('* '+args.file+' decrypted as ' + output_file)
         except (InvalidPasswordError, InvalidFileTypeError, InvalidFileError, InvalidFileContentError, SameInputOutputFileError) as e: 
@@ -37,7 +37,6 @@ def main():
             exit(1)
 
     if args.delete_original:
-        os.remove(args.file)
         print('* '+args.file+' deleted')
 
 

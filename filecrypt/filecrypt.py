@@ -36,7 +36,7 @@ class FileCrypt:
     extension = 'fc'
 
     ## TODO: add some logic in here about the .fc extension, but raise errors rather than outputting to screen as in __main__
-    def encryptfile(self, in_filename, password, out_filename=None, key_length=32):
+    def encryptfile(self, in_filename, password, out_filename=None, delete_original=False, key_length=32):
         if out_filename == None:
             out_filename = self.add_extension(in_filename)
         if in_filename == out_filename:
@@ -48,8 +48,12 @@ class FileCrypt:
         except IOError as ioe:
             raise InvalidFileError(ioe.strerror + ': ' + ioe.filename)
 
+        ## delete original
+        if delete_original:
+            os.remove(in_filename)            
 
-    def decryptfile(self, in_filename, password, out_filename=None, key_length=32):
+
+    def decryptfile(self, in_filename, password, out_filename=None, delete_original=False, key_length=32):
         if out_filename == None:
             out_filename = self.remove_extension(in_filename)
         if in_filename == out_filename:
@@ -75,6 +79,10 @@ class FileCrypt:
             content = out_file.read()
         if content == '':
             raise  InvalidPasswordError('Invalid password')
+
+        ## delete original
+        if delete_original:
+            os.remove(in_filename)
 
     def add_extension(self, filename):
         return filename + '.' + self.extension
