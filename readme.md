@@ -1,10 +1,12 @@
 # filecrypt
 
-Python 2 script to encypt/decrypt files with password. 
+Python 2 script to encypt/decrypt files with password. Basically a UI/API around [this stackoverflow answer](http://stackoverflow.com/questions/16761458/how-to-aes-encrypt-decrypt-files-using-python-pycrypto-in-an-openssl-compatible)
 
 ## requires
 
 	pycrypt
+
+via `pip` or `easy_install`
 
 ## usage
 
