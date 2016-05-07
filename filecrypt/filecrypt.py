@@ -9,6 +9,10 @@ from Crypto.Cipher import AES
 from Crypto import Random
 from pprint import pprint
 
+class BadPasswordException(Exception):
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)
+
 class FileCrypt:
     bs = AES.block_size
     prefix = 'filecrypt__'
@@ -20,8 +24,14 @@ class FileCrypt:
             self.encrypt(in_file, out_file, password)  
 
     def decryptfile(self, in_filename, out_filename, password, key_length=32):
-        with open(in_filename, 'rb') as in_file, open(out_filename, 'w') as out_file:
-            self.decrypt(in_file, out_file, password)        
+        with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
+            self.decrypt(in_file, out_file, password) 
+        # check contents
+        with open(out_filename, 'rb') as out_file:
+            content = out_file.read()
+        if content == '':
+            raise  BadPasswordException('Invalid password')
+
 
     def encrypt(self, in_file, out_file, password, key_length=32):
         salt = Random.new().read(self.bs - len(self.prefix))

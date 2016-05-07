@@ -1,7 +1,7 @@
 import argparse, os, re, shutil, sys
 from pprint import pprint
 
-from filecrypt.filecrypt import FileCrypt
+from filecrypt.filecrypt import FileCrypt, BadPasswordException
 
 def main():
     ## arguments
@@ -43,8 +43,11 @@ def main():
                     shutil.copyfile(args.file, tmpfile)
                     os.remove(args.file)
                     args.file = tmpfile
-        filecrypt.decryptfile(args.file, args.output_file, password)
-        print('* '+args.file+' decrypted as '+args.output_file)
+        try:
+            filecrypt.decryptfile(args.file, args.output_file, password)
+            print('* '+args.file+' decrypted as '+args.output_file)
+        except: 
+            print('* Invalid password')
 
     if args.delete_original:
         os.remove(args.file)

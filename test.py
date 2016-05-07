@@ -2,7 +2,7 @@ import unittest, os, uuid, shutil, datetime, time
 from filecrypt.filecrypt import FileCrypt
 from pprint import pprint
 
-class MyTest(unittest.TestCase):
+class FilecryptTest(unittest.TestCase):
 	__rootdir = os.path.abspath(os.sep)
 	__unencrypted_content = "foo bar baz"
 	__password = str(uuid.uuid4())[:8]
