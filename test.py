@@ -25,8 +25,7 @@ class MyTest(unittest.TestCase):
 		self.__encryptfile()
 		self.__remove_test_file()
 		self.__decryptfile()
-		with open(self.__unencrypted_filename, 'r') as text_file:
-			content = text_file.read()
+		content = self.__read_test_file()
 		self.assertEqual(self.__unencrypted_content, content)
 
 	#### helpers	
@@ -40,6 +39,12 @@ class MyTest(unittest.TestCase):
 	def __remove_test_file(self, filename=None):
 		filename = self.__unencrypted_filename if filename == None else filename
 		os.remove(filename)
+
+	def __read_test_file(self, filename=None):
+		filename = self.__unencrypted_filename if filename == None else filename
+		with open(filename, 'r') as text_file:
+			content = text_file.read()
+		return content
 
 	def __encryptfile(self, in_filename=None, out_filename=None, password=None):
 		in_filename = self.__unencrypted_filename if in_filename == None else in_filename
