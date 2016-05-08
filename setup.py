@@ -1,3 +1,6 @@
+import ez_setup
+ez_setup.use_setuptools()
+
 import os
 from setuptools import setup, find_packages
 # setup(
@@ -22,6 +25,7 @@ setup(
     url = "http://packages.python.org/filecrypt",
     packages=['filecrypt'],
     long_description=read('readme.md'),
+    install_requires = ['pycrypto'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
