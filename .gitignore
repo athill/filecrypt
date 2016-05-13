@@ -4,9 +4,9 @@
 ### build files
 build/
 dist/
-filecrypt.egg-info/
+*.egg-info/
 venv/
-
+setuptools*
 
 ### testing files
 test.txt

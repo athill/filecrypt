@@ -1,7 +1,7 @@
 import argparse, os, re, shutil, sys
 from pprint import pprint
 
-from filecrypt.filecrypt import (FileCrypt, InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError, 
+from pyfilecrypt import (FileCrypt, InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError, 
     SameInputOutputFileError, InvalidFileError
 )
 
