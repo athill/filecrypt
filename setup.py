@@ -1,5 +1,5 @@
-import ez_setup
-ez_setup.use_setuptools()
+# import ez_setup
+# ez_setup.use_setuptools()
 
 import os
 from setuptools import setup # s, find_packages
@@ -17,7 +17,7 @@ def read(fname):
 
 setup(
     name = "athill-filecrypt",
-    version = "0.0.4",
+    version = "0.0.7",
     author = "Andy Hill",
     author_email = "andy@andyhill.us",
     description = ("Password protect files."),
