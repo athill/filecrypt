@@ -1,5 +1,5 @@
 import unittest, os, uuid, shutil, datetime, time
-from filecrypt.filecrypt import FileCrypt, InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError, SameInputOutputFileError, InvalidFileError
+from filecrypt import FileCrypt, InvalidPasswordError, InvalidFileTypeError, InvalidFileContentError, SameInputOutputFileError, InvalidFileError
 from pprint import pprint
 
 counter = 0
