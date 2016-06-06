@@ -16,11 +16,12 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "athill-filecrypt",
-    version = "0.0.7",
+    name = "athill_filecrypt",
+    version = "0.0.8",
     author = "Andy Hill",
     author_email = "andy@andyhill.us",
     description = ("Password protect files."),
+
     entry_points = {
         "console_scripts": ['filecrypt = cli.Cli:main']
     },    

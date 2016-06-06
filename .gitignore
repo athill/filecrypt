@@ -11,3 +11,6 @@ setuptools*
 ### testing files
 test.txt
 test.txt.fc
+
+#osx
+.DS_Store
